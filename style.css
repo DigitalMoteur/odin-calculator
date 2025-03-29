@@ -1,0 +1,48 @@
+body {
+    background-color: white;
+    color: white;
+}
+
+button {
+    width: 100px;
+    height: 100px;
+    margin: 0px;
+    font-size: 2em;
+}
+.entry {
+    background-color: orange;
+}
+
+.func {
+    background-color: red;
+}
+
+.operator {
+    background-color: blueviolet;
+}
+
+#calculator {
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    align-items: center;
+    flex-grow: 0;
+    min-width: 0;
+    width: 400px;
+}
+
+.zero {
+    width: 200px;
+}
+
+div {
+    display: flex;
+    min-width: 0;
+}
+#screen {
+    font-size: 4em;
+    justify-content: right;
+    flex-grow: 1;
+    min-width: 400px;
+}

@@ -1,7 +1,22 @@
 // DOM elements
 const screen = grabElement("screen");
-const clear = grabElement("toggleSign");
-const toggleSign = grabElement("div100");
+const clear = grabElement("clear");
+clear.addEventListener('click', Reset);
+const toggleSign = grabElement("toggleSign");
+toggleSign.addEventListener('click', () =>
+{
+    if (currentState.firstOperand == undefined)
+        return;
+
+    if (currentState.addToFirst) {
+        currentState.firstOperand = parseFloat(currentState.firstOperand) * -1;
+        screen.textContent = `${currentState.firstOperand}`;
+    } else if (!currentState.addToFirst && currentState.secondOperand != undefined) {
+        currentState.secondOperand = parseFloat(currentState.secondOperand) * -1;
+        screen.textContent = `${currentState.secondOperand}`;
+    }
+});
+const div100 = grabElement("div100");
 
 const div = grabElement("div");
 const mul = grabElement("mul");
@@ -69,11 +84,13 @@ function CalculatorState() {
     this.screenValue = undefined;
     this.firstOperand = undefined;
     this.secondOperand = undefined;
+    this.operator = undefined;
     this.addToFirst = true;
 }
 
 let currentState = new CalculatorState();
 
 function Reset() {
-
+    currentState = new CalculatorState();
+    screen.textContent = '0';
 }

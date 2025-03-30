@@ -8,21 +8,20 @@ toggleSign.addEventListener('click', () =>
     if (currentState.firstOperand == undefined)
         return;
 
-    if (currentState.addToFirst) {
+    if (currentState.operator == undefined) {
         currentState.firstOperand = parseFloat(currentState.firstOperand) * -1;
-        screen.textContent = `${currentState.firstOperand}`;
-    } else if (!currentState.addToFirst && currentState.secondOperand != undefined) {
+    } else if (currentState.operator != undefined && currentState.secondOperand != undefined) {
         currentState.secondOperand = parseFloat(currentState.secondOperand) * -1;
-        screen.textContent = `${currentState.secondOperand}`;
     }
+    updateScreen();
 });
 const div100 = grabElement("div100");
 div100.addEventListener('click', () => {
     if (currentState.firstOperand != undefined
-        && currentState.addToFirst) {
+        && currentState.operator == undefined) {
         currentState.firstOperand = parseFloat(currentState.firstOperand) * 0.01;
     } else if (currentState.secondOperand != undefined
-        && !currentState.addToFirst) {
+        && currentState.operator != undefined) {
         currentState.secondOperand = parseFloat(currentState.secondOperand) * 0.01;
     }
 
@@ -34,6 +33,17 @@ const mul = grabElement("mul");
 const sub = grabElement("sub");
 const add = grabElement("add");
 const ans = grabElement("ans");
+
+function addOperatorListener(elem) {
+    elem.addEventListener('click', () => {
+        currentState.operator = elem.textContent;
+    });
+}
+
+addOperatorListener(div);
+addOperatorListener(mul);
+addOperatorListener(sub);
+addOperatorListener(add);
 
 const zero = grabElement("zero");
 const one = grabElement("one");
@@ -49,17 +59,17 @@ const nine = grabElement("nine");
 function addNumberListener(elem) {
     elem.addEventListener('click', () => {
         if (currentState.firstOperand == undefined) {
-            currentState.firstOperand = elem.textContent;
+            currentState.firstOperand = parseFloat(elem.textContent);
         }
-        else if (currentState.addToFirst) {
-            currentState.firstOperand += elem.textContent;
+        else if (currentState.operator == undefined) {
+            currentState.firstOperand = parseFloat(`${currentState.firstOperand}` + elem.textContent);
         }
         else if (currentState.secondOperand == undefined) {
-            currentState.secondOperand = elem.textContent;
+            currentState.secondOperand = parseFloat(elem.textContent);
         }
         else
         {
-            currentState.secondOperand += elem.textContent;
+            currentState.secondOperand = parseFloat(`${currentState.secondOperand}` + elem.textContent);
         }
 
         updateScreen();
@@ -89,7 +99,6 @@ function CalculatorState() {
     this.firstOperand = undefined;
     this.secondOperand = undefined;
     this.operator = undefined;
-    this.addToFirst = true;
 }
 
 let currentState = new CalculatorState();
@@ -101,10 +110,14 @@ function Reset() {
 
 function updateScreen() {
     if (currentState.firstOperand != undefined
-        && currentState.addToFirst) {
-        screen.textContent = `${+parseFloat(currentState.firstOperand).toFixed(10)}`;
+        && currentState.operator == undefined) {
+        screen.textContent = `${+currentState.firstOperand.toFixed(10)}`;
     } else if (currentState.secondOperand != undefined
-        && !currentState.addToFirst) {
-        screen.textContent = `${+parseFloat(currentState.secondOperand).toFixed(10)}`;
+        && currentState.operator != undefined) {
+        screen.textContent = `${+currentState.secondOperand.toFixed(10)}`;
     }
+}
+
+function processAnswer() {
+    
 }

@@ -17,6 +17,17 @@ toggleSign.addEventListener('click', () =>
     }
 });
 const div100 = grabElement("div100");
+div100.addEventListener('click', () => {
+    if (currentState.firstOperand != undefined
+        && currentState.addToFirst) {
+        currentState.firstOperand = parseFloat(currentState.firstOperand) * 0.01;
+    } else if (currentState.secondOperand != undefined
+        && !currentState.addToFirst) {
+        currentState.secondOperand = parseFloat(currentState.secondOperand) * 0.01;
+    }
+
+    updateScreen();
+});
 
 const div = grabElement("div");
 const mul = grabElement("mul");
@@ -41,24 +52,17 @@ function addNumberListener(elem) {
             currentState.firstOperand = elem.textContent;
         }
         else if (currentState.addToFirst) {
-            currentState.firstOperand = currentState.firstOperand + elem.textContent;
+            currentState.firstOperand += elem.textContent;
         }
         else if (currentState.secondOperand == undefined) {
             currentState.secondOperand = elem.textContent;
         }
         else
         {
-            currentState.secondOperand = currentState.secondOperand + elem.textContent;
+            currentState.secondOperand += elem.textContent;
         }
 
-        if (currentState.addToFirst)
-        {
-            screen.textContent = currentState.firstOperand;
-        }
-        else
-        {
-            screen.textContent = currentState.secondOperand;
-        }
+        updateScreen();
     });
 }
 
@@ -93,4 +97,14 @@ let currentState = new CalculatorState();
 function Reset() {
     currentState = new CalculatorState();
     screen.textContent = '0';
+}
+
+function updateScreen() {
+    if (currentState.firstOperand != undefined
+        && currentState.addToFirst) {
+        screen.textContent = `${+parseFloat(currentState.firstOperand).toFixed(10)}`;
+    } else if (currentState.secondOperand != undefined
+        && !currentState.addToFirst) {
+        screen.textContent = `${+parseFloat(currentState.secondOperand).toFixed(10)}`;
+    }
 }

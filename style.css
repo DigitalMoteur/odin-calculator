@@ -9,6 +9,7 @@ button {
     margin: 0px;
     font-size: 2em;
 }
+
 .entry {
     background-color: orange;
 }
@@ -44,5 +45,5 @@ div {
     font-size: 4em;
     justify-content: right;
     flex-grow: 1;
-    min-width: 400px;
+    min-width: 390px;
 }

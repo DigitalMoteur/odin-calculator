@@ -33,6 +33,9 @@ const mul = grabElement("mul");
 const sub = grabElement("sub");
 const add = grabElement("add");
 const ans = grabElement("ans");
+ans.addEventListener('click', () => {
+    processAnswer();
+});
 
 function addOperatorListener(elem) {
     elem.addEventListener('click', () => {
@@ -95,7 +98,6 @@ function grabElement(id) {
 }
 
 function CalculatorState() {
-    this.screenValue = undefined;
     this.firstOperand = undefined;
     this.secondOperand = undefined;
     this.operator = undefined;
@@ -119,5 +121,29 @@ function updateScreen() {
 }
 
 function processAnswer() {
-    
+    switch(currentState.operator) {
+        case '/':
+            if (currentState.secondOperand == 0.0) {
+                Reset();
+                screen.textContent = "Error: Divide by zero";
+                return;
+            }
+            currentState.firstOperand /= currentState.secondOperand;
+            break;
+        case '*':
+            currentState.firstOperand *= currentState.secondOperand;
+            break;
+        case '-':
+            currentState.firstOperand -= currentState.secondOperand;
+            break;
+        case '+':
+            currentState.firstOperand += currentState.secondOperand;
+            break;
+        default:
+            // Early out, don't update state
+            return;
+    }
+    currentState.secondOperand = undefined;
+    currentState.operator = undefined;
+    updateScreen();
 }

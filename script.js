@@ -15,6 +15,7 @@ toggleSign.addEventListener('click', () =>
     }
     updateScreen();
 });
+
 const div100 = grabElement("div100");
 div100.addEventListener('click', () => {
     if (currentState.firstOperand != undefined
@@ -61,18 +62,30 @@ const nine = grabElement("nine");
 
 function addNumberListener(elem) {
     elem.addEventListener('click', () => {
+        const textContent = screen.textContent;
+        const waitingForDecimal = textContent != undefined ? textContent.charAt(textContent.length - 1) == '.' : false;
         if (currentState.firstOperand == undefined) {
             currentState.firstOperand = parseFloat(elem.textContent);
         }
         else if (currentState.operator == undefined) {
-            currentState.firstOperand = parseFloat(`${currentState.firstOperand}` + elem.textContent);
+            if (waitingForDecimal) {
+                currentState.firstOperand = parseFloat(`${currentState.firstOperand}.` + elem.textContent)
+            }
+            else {
+                currentState.firstOperand = parseFloat(`${currentState.firstOperand}` + elem.textContent);
+            }
         }
         else if (currentState.secondOperand == undefined) {
             currentState.secondOperand = parseFloat(elem.textContent);
         }
         else
         {
-            currentState.secondOperand = parseFloat(`${currentState.secondOperand}` + elem.textContent);
+            if (waitingForDecimal) {
+                currentState.secondOperand = parseFloat(`${currentState.secondOperand}.` + elem.textContent)
+            }
+            else {
+                currentState.secondOperand = parseFloat(`${currentState.secondOperand}` + elem.textContent);
+            }
         }
 
         updateScreen();
@@ -91,7 +104,10 @@ addNumberListener(eight);
 addNumberListener(nine);
 
 const decimalPoint = grabElement("decimalPoint");
-
+decimalPoint.addEventListener('click', () => {
+    if (!screen.textContent.includes('.'))
+        screen.textContent += '.';
+});
 
 function grabElement(id) {
     return document.querySelector(`#${id}`);
@@ -121,11 +137,13 @@ function updateScreen() {
 }
 
 function processAnswer() {
+    if (currentState.firstOperand == undefined)
+        return;
     switch(currentState.operator) {
         case '/':
-            if (currentState.secondOperand == 0.0) {
+            if (currentState.secondOperand == 0) {
                 Reset();
-                screen.textContent = "Error: Divide by zero";
+                screen.textContent = "Err: Nah, mate.";
                 return;
             }
             currentState.firstOperand /= currentState.secondOperand;

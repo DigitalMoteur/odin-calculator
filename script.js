@@ -78,9 +78,13 @@ function updateState() {
 function addNumberListener(elem) {
     elem.addEventListener('click', () => {
         if ((currentState.operator != undefined && currentState.secondOperand == undefined)
-            || (currentState.operator == undefined && screen.textContent === '0')
-            || (currentState.operator == undefined && parseFloat(screen.textContent) == currentState.lastAnswer))
+            || (currentState.operator == undefined && screen.textContent === '0')) {
+                screen.textContent = '';
+        }
+        else if (currentState.operator == undefined && currentState.operatingLastAnswer) {
             screen.textContent = '';
+            currentState.operatingLastAnswer = false;
+        }
         if (screen.textContent.length <= 11)
             screen.textContent += elem.textContent;
         updateState();
@@ -100,9 +104,12 @@ addNumberListener(nine);
 
 const decimalPoint = grabElement("decimalPoint");
 decimalPoint.addEventListener('click', () => {
-    if ((currentState.operator != undefined && currentState.secondOperand == undefined)
-        || (currentState.operator == undefined && currentState.lastAnswer == parseFloat(screen.textContent).toFixed(10)))
+    if ((currentState.operator != undefined && currentState.secondOperand == undefined)) {
         screen.textContent = '0';
+    }
+    else if (currentState.operator == undefined && currentState.operatingLastAnswer) {
+        screen.textContent = '0';
+    }
     if (!screen.textContent.includes('.'))
         screen.textContent += '.';
 });
@@ -115,7 +122,7 @@ function CalculatorState() {
     this.firstOperand = undefined;
     this.secondOperand = undefined;
     this.operator = undefined;
-    this.lastAnswer = undefined;
+    this.operatingLastAnswer = false;
 }
 
 let currentState = new CalculatorState();
@@ -128,10 +135,10 @@ function Reset() {
 function updateScreen() {
     if (currentState.firstOperand != undefined
         && currentState.operator == undefined) {
-        screen.textContent = `${+currentState.firstOperand.toFixed(10)}`;
+        screen.textContent = `${+currentState.firstOperand.toPrecision(11)}`;
     } else if (currentState.secondOperand != undefined
         && currentState.operator != undefined) {
-        screen.textContent = `${+currentState.secondOperand.toFixed(10)}`;
+        screen.textContent = `${+currentState.secondOperand.toPrecision(11)}`;
     }
 }
 
@@ -162,6 +169,6 @@ function processAnswer() {
     }
     currentState.secondOperand = undefined;
     currentState.operator = undefined;
-    currentState.lastAnswer = currentState.firstOperand;
+    currentState.operatingLastAnswer = true;
     updateScreen();
 }

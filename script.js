@@ -5,27 +5,28 @@ clear.addEventListener('click', Reset);
 const toggleSign = grabElement("toggleSign");
 toggleSign.addEventListener('click', () =>
 {
+    updateState();
     if (currentState.firstOperand == undefined)
         return;
 
     if (currentState.operator == undefined) {
-        currentState.firstOperand = parseFloat(currentState.firstOperand) * -1;
+        currentState.firstOperand = currentState.firstOperand * -1;
     } else if (currentState.operator != undefined && currentState.secondOperand != undefined) {
-        currentState.secondOperand = parseFloat(currentState.secondOperand) * -1;
+        currentState.secondOperand = currentState.secondOperand * -1;
     }
     updateScreen();
 });
 
 const div100 = grabElement("div100");
 div100.addEventListener('click', () => {
+    updateState();
     if (currentState.firstOperand != undefined
         && currentState.operator == undefined) {
-        currentState.firstOperand = parseFloat(currentState.firstOperand) * 0.01;
+        currentState.firstOperand = currentState.firstOperand * 0.01;
     } else if (currentState.secondOperand != undefined
         && currentState.operator != undefined) {
-        currentState.secondOperand = parseFloat(currentState.secondOperand) * 0.01;
+        currentState.secondOperand = currentState.secondOperand * 0.01;
     }
-
     updateScreen();
 });
 
@@ -40,6 +41,10 @@ ans.addEventListener('click', () => {
 
 function addOperatorListener(elem) {
     elem.addEventListener('click', () => {
+        if (currentState.operator != undefined
+            && currentState.secondOperand != undefined) {
+            processAnswer();
+        }
         currentState.operator = elem.textContent;
     });
 }
@@ -60,35 +65,26 @@ const seven = grabElement("seven");
 const eight = grabElement("eight");
 const nine = grabElement("nine");
 
+function updateState() {
+    if (currentState.operator != undefined) {
+        currentState.secondOperand = parseFloat(screen.textContent);
+    }
+    else
+    {
+        currentState.firstOperand = parseFloat(screen.textContent);
+    }
+}
+
 function addNumberListener(elem) {
     elem.addEventListener('click', () => {
-        const textContent = screen.textContent;
-        const waitingForDecimal = textContent != undefined ? textContent.charAt(textContent.length - 1) == '.' : false;
-        if (currentState.firstOperand == undefined) {
-            currentState.firstOperand = parseFloat(elem.textContent);
-        }
-        else if (currentState.operator == undefined) {
-            if (waitingForDecimal) {
-                currentState.firstOperand = parseFloat(`${currentState.firstOperand}.` + elem.textContent)
-            }
-            else {
-                currentState.firstOperand = parseFloat(`${currentState.firstOperand}` + elem.textContent);
-            }
-        }
-        else if (currentState.secondOperand == undefined) {
-            currentState.secondOperand = parseFloat(elem.textContent);
-        }
-        else
-        {
-            if (waitingForDecimal) {
-                currentState.secondOperand = parseFloat(`${currentState.secondOperand}.` + elem.textContent)
-            }
-            else {
-                currentState.secondOperand = parseFloat(`${currentState.secondOperand}` + elem.textContent);
-            }
-        }
-
-        updateScreen();
+        if ((currentState.operator != undefined && currentState.secondOperand == undefined)
+            || (currentState.operator == undefined && screen.textContent === '0')
+            || (currentState.operator == undefined && parseFloat(screen.textContent) == currentState.lastAnswer))
+            screen.textContent = '';
+        if (screen.textContent.length <= 11)
+            screen.textContent += elem.textContent;
+        //currentState.secondOperand = parseFloat(`${currentState.secondOperand}.` + elem.textContent);
+        updateState();
     });
 }
 
@@ -105,6 +101,9 @@ addNumberListener(nine);
 
 const decimalPoint = grabElement("decimalPoint");
 decimalPoint.addEventListener('click', () => {
+    if ((currentState.operator != undefined && currentState.secondOperand == undefined)
+        || (currentState.operator == undefined && currentState.lastAnswer == parseFloat(screen.textContent).toFixed(10)))
+        screen.textContent = '0';
     if (!screen.textContent.includes('.'))
         screen.textContent += '.';
 });
@@ -117,6 +116,7 @@ function CalculatorState() {
     this.firstOperand = undefined;
     this.secondOperand = undefined;
     this.operator = undefined;
+    this.lastAnswer = undefined;
 }
 
 let currentState = new CalculatorState();
@@ -163,5 +163,6 @@ function processAnswer() {
     }
     currentState.secondOperand = undefined;
     currentState.operator = undefined;
+    currentState.lastAnswer = currentState.firstOperand;
     updateScreen();
 }

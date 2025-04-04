@@ -83,7 +83,6 @@ function addNumberListener(elem) {
             screen.textContent = '';
         if (screen.textContent.length <= 11)
             screen.textContent += elem.textContent;
-        //currentState.secondOperand = parseFloat(`${currentState.secondOperand}.` + elem.textContent);
         updateState();
     });
 }
